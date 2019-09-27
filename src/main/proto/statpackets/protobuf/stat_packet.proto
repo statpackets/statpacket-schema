@@ -1,0 +1,166 @@
+syntax = "proto3";
+package org.statpackets.schema.v1.core;
+
+import "statpackets/protobuf/base.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "base.proto";
+import "phenopackets.proto";
+
+option java_multiple_files = true;
+option java_package = "org.statpackets.schema.v1";
+
+message MetaData {
+
+    // This globally unique statpacket identifier
+    UUID id = 1;
+
+    // ISO8601 UTC timestamp for when this phenopacket was created in ISO "2018-03-01T00:00:00Z"
+    google.protobuf.Timestamp created = 2;
+
+    // An identifier for the contributor / program
+    google.protobuf.StringValue created_by = 3;
+
+       // a listing of the ontologies/resources referenced in the phenopacket
+    repeated org.phenopackets.schema.v1.core.Resource resources = 4;
+
+    // ISO8601 UTC timestamps at which this record was updated, in
+    // the format YYYY-MM-DDTHH:MM:SS.SSSZ e.g. 2007-12-03T10:15:30.00Z
+    repeated google.protobuf.Timestamp updated = 5;
+
+    // statpacket-schema-version used to create this statpacket
+    string statpacket_schema_version = 6;
+
+    // Gene
+    org.phenopackets.schema.v1.core.Gene gene = 7;
+}
+
+message Result {
+    map<string, double> results = 1;
+}
+
+message Method {
+    string name = 1;
+    string formula = 2;
+    string documentation = 3;
+    Result result = 4;
+}
+
+message Methods {
+    repeated Method method = 1;
+}
+
+
+message StatPacket {
+    MetaData metadata = 1;
+    Data data = 2;
+    Methods methods = 3;
+    map<string, string> other_information = 5;
+}
+
+message Data {
+    repeated Measurement measurements = 2;
+}
+
+message Parameter {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string unit = 4;
+    google.protobuf.
+
+    enum GraphType {
+        SCATTER = 0;
+        BAR = 1;
+        PIE = 2;
+        SERIES = 3;
+    };
+}
+
+message Procedure {
+    string id = 1;
+    string name = 2;
+    string accession_id = 3;
+    string description = 4;
+}
+
+message Pipeline {
+    string id = 1;
+    string name = 2;
+    string abbreviation = 3;
+    string description = 4;
+}
+
+
+message Measurement {
+
+    // FixedEffect captures data related to some effect(s) accounting for some of the
+    // known variation in a measurement
+    message FixedEffect {
+        string id = 1;
+        string name = 2;
+        float value = 3;
+        Procedure procedure = 4;
+        google.protobuf.Timestamp datetime_of_measure = 6;
+    }
+
+    Sample sample = 1;
+    Parameter parameter = 2;
+    Procedure procedure = 4;
+
+    // Represent known effects that could be included in the model
+    repeated FixedEffect fixed_effects = 3;
+
+    google.protobuf.Timestamp date_of_measurement = 5;
+
+    map<string, string> additional_information = 6;
+
+    message ContinuousValue {
+        string value_name = 1;
+        double value = 2;
+    }
+
+    message CategoricalValue {
+        string value_name = 1;
+        string value = 2;
+    }
+
+    oneof data_point {
+        ContinuousValue continuous_value = 8;
+        CategoricalValue categorical_value = 9;
+    };
+
+}
+
+message Sample {
+
+    // Identifier of the sample at the institute that generated the sample
+    string id = 1;
+
+    // When the sample was born (empty for embryo samples)
+    google.protobuf.Timestamp date_of_birth = 2;
+
+    // The type of sample (mouse or embryo)
+    SampleType sample_type = 3;
+
+    // If the sample has a sex,
+    org.phenopackets.schema.v1.core.Sex sex = 4;
+
+    enum SampleGroup {
+        EXPERIMENTAL = 0;
+        CONTROL = 1;
+        BASELINE = 2;
+        OTHER = 3;
+    };
+}
+
+message Count {
+    UUID id = 1;
+    string type = 2;
+    int32 count = 3;
+}
+
+message DatasetCount {
+    UUID id = 1;
+    repeated Count counts = 2;
+}

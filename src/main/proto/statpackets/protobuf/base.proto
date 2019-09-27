@@ -1,0 +1,32 @@
+syntax = "proto3";
+package org.statpackets.schema.v1.core;
+
+option java_multiple_files = true;
+option java_package = "org.statpackets.schema.v1";
+
+message UUID {
+    string value = 1;
+}
+
+message SampleType {
+
+    enum sample_types {
+        EMBRYO = 0;
+        SPECIMEN = 1;
+    }
+
+    oneof type {
+        string name = 3;
+        sample_types stype = 4;
+    }
+
+};
+
+enum Sex {
+    BOTH = 0;
+    FEMALE = 1;
+    MALE = 2;
+    NO_DATA = 3;
+    UNKNOWN = 4;
+};
+
