@@ -5,6 +5,9 @@ sudo: false
 jdk:
   - openjdk8
 
+before_install:
+  - chmod +x mvnw
+
 script: mvn clean package
 
 env:
