@@ -67,7 +67,6 @@ message Parameter {
     string name = 2;
     string description = 3;
     string unit = 4;
-    google.protobuf.
 
     enum GraphType {
         SCATTER = 0;
